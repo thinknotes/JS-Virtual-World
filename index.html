@@ -12,19 +12,24 @@
   <h1>World Editor</h1>
   <canvas id="canvas"></canvas>
   <div id="controls">
-    
+    <button onclick="dispose()">🗑️ - Trash</button>
+    <button onclick="save()">📁 - Save</button>
 
   </div>
   
   <script src="graphEditor.js"></script>
+  <script src="world.js"></script>
   <script src="utils.js"></script>
   <script src="viewport.js"></script>
   <script src="graphEditor.js"></script>
   <script src="graph.js"></script>
   <script src="primitives/point.js"></script>
   <script src="primitives/segment.js"></script>
+  <script src="primitives/polygon.js"></script>
+  <script src="primitives/envelope.js"></script>
   <script>
-     canvas.width = 600;
+    //Orginally canvas width 600 * 600
+     canvas.width = 1200;
      canvas.height = 600;
 
      const ctx = canvas.getContext("2d");
@@ -39,19 +44,33 @@
       const s3 = new Segment(p1, p4);
       const s4 = new Segment(p2, p3);
 
-      const graph = new Graph([p1, p2, p3, p4], [s1, s2, s3, s4]);
+      const graphString = localStorage.getItem("graph");
+      const graphInfo = graphString ? JSON.parse(graphString) : null;
+      const graph = graphInfo 
+          ? Graph.load(graphInfo)
+          : new Graph();
+      const world = new World(graph);
       const viewport = new Viewport(canvas);
       const graphEditor = new GraphEditor(viewport, graph);
 
       animate();
 
       function animate() {
-         ctx.clearRect(0, 0, canvas.width, canvas.height);
-         ctx.save();
-         ctx.scale(1 / viewport.zoom, 1 / viewport.zoom);
+         viewport.reset();
+         world.generate();
+         world.draw(ctx);
          graphEditor.display();
-         ctx.restore();
+         new Envelope(graph.segments[0], 200, 20).draw(ctx);
          requestAnimationFrame(animate);
+      }
+
+
+      function dispose() {
+        graphEditor.dispose();
+      }
+
+      function save() {
+        localStorage.setItem("graph", JSON.stringify(graph));
       }
 
 
