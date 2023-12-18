@@ -17,10 +17,13 @@ class World {
             );
         }
 
-        this.intersections = Polygon.break(
-            this.envelopes[0].poly, 
-            this.envelopes[1].poly
-        );
+
+       
+      
+        // this.intersections = Polygon.break(
+        //     this.envelopes[0].poly, 
+        //     this.envelopes[1].poly
+        // );
     }
 
     draw(ctx) {
@@ -28,9 +31,9 @@ class World {
             env.draw(ctx);
         }
 
-        for(const env of this.intersections) {
-            env.draw(ctx);
-        }
+        // for(const int of this.intersections) {
+        //     int.draw(ctx, {color: "red", size: 6 });
+        // }
     }
 
 }
